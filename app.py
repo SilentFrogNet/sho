@@ -6,7 +6,7 @@ from termcolor import colored
 from click_shell import shell
 # from configobj import ConfigObj
 
-from sho.core.sho import ShO
+from sho.core.sho import Sho
 from sho.utils import Banners
 from sho.utils.logger import Logger, LogTypes
 
@@ -158,7 +158,7 @@ def cli(ctx, verbose):
     """
 
     ctx.obj = ShoConfig()
-    ctx.obj.sho = ShO(verbose=verbose)
+    ctx.obj.sho = Sho(verbose=verbose)
 
     ctx.obj.logger = Logger(LogTypes.TO_COLORED_SCREEN)
 

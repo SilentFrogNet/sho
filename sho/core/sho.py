@@ -1,4 +1,4 @@
-class ShO:
+class Sho:
     configured_shells = None
 
     def __init__(self, verbose=False):
