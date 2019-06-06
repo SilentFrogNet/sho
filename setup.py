@@ -12,6 +12,7 @@ with open('README.md') as f:
 
 requirements = [
     'click>=6.0',
+    'click-shell',
     # 'click-shell'     # TODO: this is my click-shell implementation (find a way to install it from github)
     'termcolor',
     'colorama',
@@ -21,9 +22,9 @@ requirements = [
 testing_requirements = [
     'coveralls',
     'pep8',
-    'pylint>=1.5,<1.6',
-    'pytest>=2.8,<2.9',
-    'pytest-cov>=2.2,<2.3',
+    'pylint>=2.3,<2.4',
+    'pytest>=4.6,<4.7',
+    'pytest-cov>=2.7,<2.8',
 ]
 
 

@@ -3,7 +3,7 @@ import click
 
 from colorama import init as colorama_init
 from termcolor import colored
-from click_shell import shell, add_shell_only_command
+from click_shell import shell
 # from configobj import ConfigObj
 
 from sho.core.sho import ShO
