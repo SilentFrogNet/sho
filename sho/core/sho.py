@@ -23,4 +23,4 @@ class ShO:
 
         out = []
         for s in self.configured_shells:
-            out.append(f"{'ssh' if s['is_ssh'] else 'local'} @ {s['name']} - {s['host']}")
+            out.append("{type} @ {name} - {host}".format(type='ssh' if s['is_ssh'] else 'local', name=s['name'], host=s['host']))
