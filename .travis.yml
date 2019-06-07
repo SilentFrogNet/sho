@@ -1,5 +1,10 @@
 dist: xenial
 
+branches:
+  only:
+  - master
+  - devel
+
 language: python
 python:
   - "3.4"
@@ -18,8 +23,9 @@ sudo: false
 install:
   - pip install -U pip
   - pip install -U wheel
-#  - pip install -U twine
+#  - pip install -U twine # do not want to push to PyPI
   - pip install -U -e .[testing]
+  - pip install -U .
 
 ## Customize test commands - just a pep8 and pylint check for now
 before_script:

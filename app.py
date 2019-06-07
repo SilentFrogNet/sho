@@ -1,26 +1,20 @@
 import os
 import click
 
+from os.path import expanduser
 from colorama import init as colorama_init
 from termcolor import colored
 from click_shell import shell
 # from configobj import ConfigObj
 
 from sho.core.sho import Sho
-from sho.utils import Banners
+from sho.core.sho_types import ShoTypes
+from sho.core.exceptions import InconsistentParametersError, AlreadyExistingShellError
 from sho.utils.logger import Logger, LogTypes
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
-# DEFAULT_DELAY = 30.0
-# DEFAULT_URL_TIMEOUT = 15
-# DEFAULT_SEARCH_MAX = 100
-# DEFAULT_DOWNLOAD_FILE_LIMIT = 100
-# DEFAULT_NUM_OF_THREADS = 8
-#
-# ALLOWED_CONFIG_SET_COMMANDS = ['working_dir', 'verbose', 'stealth', 'file_types', 'number_threads', 'domain']
-#
 # project_configs = ConfigObj('configs.ini')
 
 class ShoConfig:
@@ -34,16 +28,6 @@ class ShoConfig:
         self.logger = None
 
         self.working_dir = os.getcwd()
-        # self.verbose = False
-        # self.stealth = False
-        # self.file_types = []
-        # self.number_threads = DEFAULT_NUM_OF_THREADS
-        # self.domain = None
-        #
-        # self.search_max = DEFAULT_SEARCH_MAX
-        # self.download_limit = DEFAULT_DOWNLOAD_FILE_LIMIT
-        # self.delay = DEFAULT_DELAY
-        # self.url_timeout = DEFAULT_URL_TIMEOUT
 
 
 with_context = click.make_pass_decorator(ShoConfig, ensure=True)
@@ -96,24 +80,21 @@ def modify_usage_error():
 modify_usage_error()
 
 
-# def csv_list(ctx, param, value):
-#     if value is None:
-#         return []
-#     types = value.split(',')
-#
-#     out_types = []
-#     for t in types:
-#         if t in FileTypes.special_groups():
-#             out_types.extend(FileTypes.SPECIAL_GROUPS.get(t, []))
-#         else:
-#             if t in FileTypes.ALL:
-#                 out_types.append(t)
-#             else:
-#                 echo_warning(f"The file type \"{t}\" is unknown. Ignored.")
-#
-#     return list(set(out_types))
-#
-#
+def sho_types_list(ctx, param, value):
+    if value is None:
+        return []
+    types = value.split(',')
+
+    out_types = []
+    for t in types:
+        if t in ShoTypes.SUPPORTED_TYPES:
+            out_types.append(t)
+        else:
+            echo_warning(f"The type \"{t}\" is unknown. Ignored.")
+
+    return list(set(out_types))
+
+
 # def parse_ctx_config_set(ctx, param, value):
 #     if not value:
 #         return None
@@ -144,7 +125,7 @@ def get_shell_intro():
 
 def get_history_file():
     # return project_configs.get('DEFAULT', {}).get('support_directory', '~/.click-history')
-    return '~/.click-history'
+    return os.path.join(expanduser("~"), '.config', '.sho-history')
 
 
 @shell(prompt=get_shell_prompt(), intro=get_shell_intro(), hist_file=get_history_file(), context_settings=CONTEXT_SETTINGS)
@@ -156,21 +137,21 @@ def cli(ctx, verbose):
     """
     ShO is a command line tool to safely store shells configurations.
     """
-
     ctx.obj = ShoConfig()
     ctx.obj.sho = Sho(verbose=verbose)
 
     ctx.obj.logger = Logger(LogTypes.TO_COLORED_SCREEN)
 
 
-@cli.command()
+@cli.command(name='list')
+@click.option('--type', '-t', metavar='TYPES', callback=sho_types_list, expose_value=True, is_eager=True,
+              help="List of types to filter the list on. Allowed values are [{}]".format(ShoTypes.to_string()))
 @with_context
-def list(ctx_conf):
+def cmd_list(ctx_conf, type):
     """
     Lists all the shells that has already been saved.
     """
-
-    shells = ctx_conf.sho.list()
+    shells = ctx_conf.sho.strlist(shell_type=type)
     if shells:
         for s in shells:
             echo_info(s)
@@ -178,14 +159,28 @@ def list(ctx_conf):
         echo_info("No configured shells. Please use the 'add' command to add them.")
 
 
-@cli.command()
-def banner():
+@cli.command(name='add')
+@click.option('--name', '-n', required=True, type=str,
+              help="The name of the shell to add.")
+@click.option('--type', '-t', type=str,
+              help="The type of the shell to add. Allowed values are [{}]".format(ShoTypes.to_string()))
+@click.option('--description', '-d', type=str,
+              help="The description of the shell to add.")
+@click.option('--host', '-h', type=str,
+              help="The host of the shell to add. Allowed only if type is one of [{}]".format(", ".join(ShoTypes.REMOTE_TYPES)))
+@with_context
+def cmd_add(ctx_conf, name, type, description, host):
     """
-    Prints a random banner of the application
+    Lists all the shells that has already been saved.
     """
-    banner_str = "ShO - Copyright (C) 2019 Ilario Dal Grande @ SilentFrog\n"
-    banner_str += Banners.get_random_banner(version=cli_version)
-    print("\n" + banner_str)
+    try:
+        ctx_conf.sho.add(name, type, item_description=description, item_host=host)
+    except AlreadyExistingShellError:
+        echo_error("The item \"{}\" you are trying to add already exists".format(name))
+    except InconsistentParametersError as e:
+        echo_error("{} for item \"{}\"".format(e.message, name))
+
+    echo_info("Successfully added item \"{}\"".format(name))
 
 #
 # @click.command('config')
