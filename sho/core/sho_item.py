@@ -10,7 +10,7 @@ class ShoItem(object):
         self.shell_type = shell_type if shell_type in ShoTypes.SUPPORTED_TYPES else ShoTypes.LOCAL
         self.description = description
         if host and self.shell_type not in ShoTypes.REMOTE_TYPES:
-            raise InconsistentParametersError(params=[shell_type, host], message="host is not supported with a non-remote shell_type")
+            raise InconsistentParametersError(params=[shell_type, host], message="Host is not supported with a non-remote shell_type.")
         self.host = host
 
     @property
@@ -24,7 +24,7 @@ class ShoItem(object):
         )
         if self.shell_type in ShoTypes.REMOTE_TYPES:
             out_str += "({})".format(self.host)
-        return out_str
+        return "{} />".format(out_str)
 
     def __str__(self):
         return self.__repr__()

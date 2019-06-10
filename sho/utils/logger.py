@@ -32,7 +32,7 @@ class Logger:
         return self.type != LogTypes.NO_LOG
 
     def info(self, text):
-        if self.type == LogTypes.NO_LOG:
+        if not self.can_log():
             return
 
         if self.type == LogTypes.TO_SCREEN:
@@ -44,7 +44,7 @@ class Logger:
             self.logger.info(text)
 
     def success(self, text):
-        if self.type == LogTypes.NO_LOG:
+        if not self.can_log():
             return
 
         if self.type == LogTypes.TO_SCREEN:
@@ -56,7 +56,7 @@ class Logger:
             self.logger.info(text)
 
     def warning(self, text):
-        if self.type == LogTypes.NO_LOG:
+        if not self.can_log():
             return
 
         if self.type == LogTypes.TO_SCREEN:
@@ -68,7 +68,7 @@ class Logger:
             self.logger.warning(text)
 
     def error(self, text):
-        if self.type == LogTypes.NO_LOG:
+        if not self.can_log():
             return
 
         if self.type == LogTypes.TO_SCREEN:
