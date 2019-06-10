@@ -39,9 +39,7 @@ script:
 
 # Only build artifacts on success
 after_success:
-#  - coveralls
-  - codecov
-# codecov CODECOV_TOKEN="b53add43-9743-462a-b8c3-5085304a6b51"
+  - coveralls
 #  - python setup.py sdist
 #  - python setup.py bdist_wheel
 
