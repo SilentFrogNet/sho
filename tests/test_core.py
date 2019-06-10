@@ -32,6 +32,8 @@ sho_items_invalid_data = [
         'host': '192.168.1.2'
     }
 ]
+
+
 # --- [/DATA] --- #
 
 
@@ -57,6 +59,8 @@ def sho_item(request, sho):
         item_description=request.param.get('description', None),
         item_host=request.param.get('host', None)
     )
+
+
 # --- [/FIXTURES] --- #
 
 
@@ -64,6 +68,16 @@ def sho_item(request, sho):
 def add_valid_shells(sho: Sho) -> None:
     for s in sho_items_data:
         sho.add_item(ShoItem(**s))
+
+
+def compare_lists(list1: list, list2: list) -> None:
+    """ Compares two lists and checks if they are equal """
+    found = True
+    for el in list1:
+        if found and el not in list2:
+            found = False
+            break
+    return found
 # --- [/SUPPORT FUNCTIONS] --- #
 
 
@@ -135,7 +149,7 @@ def test_get_list_of_shells_string(sho: Sho) -> None:
     assert len(shells) == 2, "Should have only 2 elements"
 
     names = [s['name'] for s in sho_items_data]
-    assert shells == names
+    assert compare_lists(shells, names)
 
 
 def test_get_list_of_shells_string_verbose(sho: Sho) -> None:
@@ -146,7 +160,7 @@ def test_get_list_of_shells_string_verbose(sho: Sho) -> None:
     assert len(shells) == 2, "Should have only 2 elements"
 
     names = ['ssh\t@ demo(192.168.1.2)', 'local\t@ zsh']
-    assert shells == names
+    assert compare_lists(shells, names)
 
 
 def test_get_sho_item(sho: Sho, sho_item: ShoItem) -> None:
