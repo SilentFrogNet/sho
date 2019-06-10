@@ -23,6 +23,7 @@ sudo: false
 install:
   - pip install -U pip
   - pip install -U wheel
+  - pip install -U codecov
 #  - pip install -U twine # do not want to push to PyPI
   - pip install -U -e .[testing]
   - pip install -U .
@@ -38,7 +39,9 @@ script:
 
 # Only build artifacts on success
 after_success:
-  - coveralls
+#  - coveralls
+  - codecov
+# codecov CODECOV_TOKEN="b53add43-9743-462a-b8c3-5085304a6b51"
 #  - python setup.py sdist
 #  - python setup.py bdist_wheel
 
