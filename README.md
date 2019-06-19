@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/SilentFrogNet/sho.svg?branch=master)](https://travis-ci.org/SilentFrogNet/sho)
 [![Coverage Status](https://coveralls.io/repos/github/SilentFrogNet/sho/badge.svg?branch=master)](https://coveralls.io/github/SilentFrogNet/sho?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f12f0230d5d14e3c917346b820e22250)](https://www.codacy.com/app/SilentFrogNet/sho?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SilentFrogNet/sho&amp;utm_campaign=Badge_Grade)
 
 # ShO: Shell Orchestrator
 
